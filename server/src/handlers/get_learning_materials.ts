@@ -1,9 +1,19 @@
 
+import { db } from '../db';
+import { learningMaterialsTable } from '../db/schema';
 import { type LearningMaterial } from '../schema';
+import { eq } from 'drizzle-orm';
 
-export async function getLearningMaterials(missionId: number): Promise<LearningMaterial[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all learning materials (lectures, readings, videos, simulations)
-    // for a specific mission/meeting in the TQM course.
-    return Promise.resolve([]);
-}
+export const getLearningMaterials = async (missionId: number): Promise<LearningMaterial[]> => {
+  try {
+    const results = await db.select()
+      .from(learningMaterialsTable)
+      .where(eq(learningMaterialsTable.mission_id, missionId))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to get learning materials:', error);
+    throw error;
+  }
+};

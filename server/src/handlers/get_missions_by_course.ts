@@ -1,9 +1,20 @@
 
+import { db } from '../db';
+import { missionsTable } from '../db/schema';
 import { type Mission } from '../schema';
+import { eq, asc } from 'drizzle-orm';
 
-export async function getMissionsByCourse(courseId: number): Promise<Mission[]> {
-    // This is a placeholder declaration! Real code should be implemented here.
-    // The goal of this handler is fetching all missions/meetings for a specific course
-    // to display the learning path for students in the gamified system.
-    return Promise.resolve([]);
-}
+export const getMissionsByCourse = async (courseId: number): Promise<Mission[]> => {
+  try {
+    const results = await db.select()
+      .from(missionsTable)
+      .where(eq(missionsTable.course_id, courseId))
+      .orderBy(asc(missionsTable.meeting_number))
+      .execute();
+
+    return results;
+  } catch (error) {
+    console.error('Failed to fetch missions by course:', error);
+    throw error;
+  }
+};
